@@ -2,3 +2,4 @@
 # Local preview tools
 preview.html
 render_preview.py
+build_svgs.py
