@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 350" width="100%" height="auto">
+  <defs>
+    <linearGradient id="c3_bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#080F1E"/>
+      <stop offset="100%" stop-color="#0A162B"/>
+    </linearGradient>
+    <linearGradient id="core_glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1677FF"/>
+      <stop offset="100%" stop-color="#0052CC"/>
+    </linearGradient>
+    <pattern id="c3_dots" width="18" height="18" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="0.8" fill="#1C385E" opacity="0.4"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="595" height="3" fill="#1677FF" rx="1.5"/>
+  <rect x="595" y="0" width="255" height="3" fill="#FF4757" rx="1.5"/>
+
+  <rect x="0" y="8" width="850" height="342" rx="12" fill="url(#c3_bg)" stroke="#1A2E4C" stroke-width="1.2"/>
+  <rect x="0" y="8" width="850" height="342" rx="12" fill="url(#c3_dots)"/>
+
+  <text x="32" y="38" font-family="ui-monospace, Consolas, monospace" font-size="11.5" font-weight="600" fill="#7C95B6" letter-spacing="1.5">PRINCE-EXE <tspan fill="#415A77">/</tspan> STACK</text>
+  <text x="820" y="38" font-family="ui-monospace, Consolas, monospace" font-size="14" font-weight="900" fill="#FF4757" text-anchor="end">///</text>
+
+  <text x="30" y="80" font-family="Impact, 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="1">TOOLS IN ORBIT<tspan fill="#1677FF">.</tspan></text>
+
+  <!-- Left: Planetary Orbit Graphic (Center around x=230, y=210) -->
+  <g transform="translate(10, 20)">
+    <!-- Orbit Rings -->
+    <ellipse cx="220" cy="190" rx="180" ry="85" fill="none" stroke="#163860" stroke-width="1.2" stroke-dasharray="4,4"/>
+    <ellipse cx="220" cy="190" rx="130" ry="60" fill="none" stroke="#1F4B7D" stroke-width="1.2"/>
+    <ellipse cx="220" cy="190" rx="75" ry="35" fill="none" stroke="#255E9E" stroke-width="1.2" stroke-dasharray="2,2"/>
+
+    <!-- Central Unity Core -->
+    <circle cx="220" cy="190" r="32" fill="url(#core_glow)" stroke="#43C6FF" stroke-width="2"/>
+    <text x="220" y="196" font-family="Impact, Arial Black, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">UNITY</text>
+
+    <!-- Orbiting Nodes -->
+    <!-- Node 1: C# -->
+    <circle cx="110" cy="145" r="18" fill="#122C4D" stroke="#1677FF" stroke-width="1.5"/>
+    <text x="110" y="150" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#43C6FF" text-anchor="middle">C#</text>
+    <text x="110" y="172" font-family="-apple-system, sans-serif" font-size="9" fill="#7C95B6" text-anchor="middle">Scripting</text>
+
+    <!-- Node 2: NavMesh -->
+    <circle cx="330" cy="145" r="18" fill="#122C4D" stroke="#43C6FF" stroke-width="1.5"/>
+    <text x="330" y="149" font-family="ui-monospace, monospace" font-size="9" font-weight="bold" fill="#FFFFFF" text-anchor="middle">AI</text>
+    <text x="330" y="172" font-family="-apple-system, sans-serif" font-size="9" fill="#7C95B6" text-anchor="middle">NavMesh</text>
+
+    <!-- Node 3: Meta XR -->
+    <circle cx="65" cy="210" r="16" fill="#122C4D" stroke="#FF4757" stroke-width="1.5"/>
+    <text x="65" y="214" font-family="ui-monospace, monospace" font-size="9" font-weight="bold" fill="#FF4757" text-anchor="middle">XR</text>
+    <text x="65" y="235" font-family="-apple-system, sans-serif" font-size="9" fill="#7C95B6" text-anchor="middle">Meta XR</text>
+
+    <!-- Node 4: C++ -->
+    <circle cx="370" cy="215" r="16" fill="#122C4D" stroke="#1677FF" stroke-width="1.5"/>
+    <text x="370" y="219" font-family="ui-monospace, monospace" font-size="9" font-weight="bold" fill="#43C6FF" text-anchor="middle">C++</text>
+    <text x="370" y="240" font-family="-apple-system, sans-serif" font-size="9" fill="#7C95B6" text-anchor="middle">OOP</text>
+
+    <!-- Node 5: Physics -->
+    <circle cx="160" cy="245" r="15" fill="#122C4D" stroke="#43C6FF" stroke-width="1.5"/>
+    <text x="160" y="249" font-family="ui-monospace, monospace" font-size="8.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PHYS</text>
+    <text x="160" y="268" font-family="-apple-system, sans-serif" font-size="9" fill="#7C95B6" text-anchor="middle">RigidBody</text>
+
+    <!-- Node 6: Git -->
+    <circle cx="280" cy="245" r="15" fill="#122C4D" stroke="#FF4757" stroke-width="1.5"/>
+    <text x="280" y="249" font-family="ui-monospace, monospace" font-size="9" font-weight="bold" fill="#FF4757" text-anchor="middle">GIT</text>
+    <text x="280" y="268" font-family="-apple-system, sans-serif" font-size="9" fill="#7C95B6" text-anchor="middle">Version</text>
+  </g>
+
+  <!-- Right: Categorized Pills -->
+  <g transform="translate(460, 65)">
+    <!-- Group 1: ENGINE & LANGUAGES -->
+    <rect x="0" y="0" width="8" height="8" rx="2" fill="#1677FF"/>
+    <text x="16" y="8" font-family="ui-monospace, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7C95B6" letter-spacing="1">ENGINE &amp; LANGUAGES</text>
+    
+    <g transform="translate(0, 18)">
+      <rect x="0" y="0" width="60" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+      <text x="30" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Unity 3D</text>
+      
+      <rect x="66" y="0" width="60" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+      <text x="96" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Unity 2D</text>
+      
+      <rect x="132" y="0" width="58" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+      <text x="161" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Unity 6</text>
+
+      <rect x="196" y="0" width="40" height="22" rx="4" fill="#0C1E36" stroke="#1677FF"/>
+      <text x="216" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#43C6FF" text-anchor="middle">C#</text>
+
+      <rect x="242" y="0" width="42" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+      <text x="263" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">C++</text>
+
+      <rect x="290" y="0" width="30" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+      <text x="305" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">C</text>
+    </g>
+
+    <!-- Group 2: GAMEPLAY & SYSTEMS -->
+    <g transform="translate(0, 62)">
+      <rect x="0" y="0" width="8" height="8" rx="2" fill="#43C6FF"/>
+      <text x="16" y="8" font-family="ui-monospace, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7C95B6" letter-spacing="1">GAMEPLAY &amp; SYSTEMS</text>
+      
+      <g transform="translate(0, 18)">
+        <rect x="0" y="0" width="92" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="46" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">State Machines</text>
+
+        <rect x="98" y="0" width="94" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="145" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">NavMeshAgent</text>
+
+        <rect x="198" y="0" width="100" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="248" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Combat Systems</text>
+
+        <rect x="304" y="0" width="55" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="331" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Pooling</text>
+      </g>
+    </g>
+
+    <!-- Group 3: PHYSICS & ANIMATION -->
+    <g transform="translate(0, 124)">
+      <rect x="0" y="0" width="8" height="8" rx="2" fill="#1677FF"/>
+      <text x="16" y="8" font-family="ui-monospace, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7C95B6" letter-spacing="1">PHYSICS &amp; ANIMATION</text>
+      
+      <g transform="translate(0, 18)">
+        <rect x="0" y="0" width="75" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="37" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Rigidbody</text>
+
+        <rect x="81" y="0" width="68" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="115" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Colliders</text>
+
+        <rect x="155" y="0" width="80" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="195" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Raycasting</text>
+
+        <rect x="241" y="0" width="118" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="300" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Animator Controller</text>
+      </g>
+    </g>
+
+    <!-- Group 4: IMMERSIVE & TOOLS -->
+    <g transform="translate(0, 186)">
+      <rect x="0" y="0" width="8" height="8" rx="2" fill="#FF4757"/>
+      <text x="16" y="8" font-family="ui-monospace, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#FF4757" letter-spacing="1">IMMERSIVE &amp; TOOLS</text>
+      
+      <g transform="translate(0, 18)">
+        <rect x="0" y="0" width="88" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="44" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Meta XR SDK</text>
+
+        <rect x="94" y="0" width="62" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="125" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">OpenXR</text>
+
+        <rect x="162" y="0" width="95" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="209" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Hand Tracking</text>
+
+        <rect x="263" y="0" width="55" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="290" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Blender</text>
+
+        <rect x="324" y="0" width="35" height="22" rx="4" fill="#0C1E36" stroke="#1A3B60"/>
+        <text x="341" y="15" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Git</text>
+      </g>
+    </g>
+  </g>
+</svg>

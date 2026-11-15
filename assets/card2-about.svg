@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 330" width="100%" height="auto">
+  <defs>
+    <linearGradient id="c2_bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#080F1E"/>
+      <stop offset="100%" stop-color="#0A162B"/>
+    </linearGradient>
+    <pattern id="c2_dots" width="18" height="18" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="0.8" fill="#1C385E" opacity="0.4"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="595" height="3" fill="#1677FF" rx="1.5"/>
+  <rect x="595" y="0" width="255" height="3" fill="#FF4757" rx="1.5"/>
+
+  <rect x="0" y="8" width="850" height="322" rx="12" fill="url(#c2_bg)" stroke="#1A2E4C" stroke-width="1.2"/>
+  <rect x="0" y="8" width="850" height="322" rx="12" fill="url(#c2_dots)"/>
+
+  <text x="32" y="38" font-family="ui-monospace, Consolas, monospace" font-size="11.5" font-weight="600" fill="#7C95B6" letter-spacing="1.5">PRINCE-EXE <tspan fill="#415A77">/</tspan> ABOUT</text>
+  <text x="820" y="38" font-family="ui-monospace, Consolas, monospace" font-size="14" font-weight="900" fill="#FF4757" text-anchor="end">///</text>
+
+  <text x="30" y="80" font-family="Impact, 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="1">WHAT I BUILD<tspan fill="#1677FF">.</tspan></text>
+
+  <!-- Left: 4 Features list -->
+  <g transform="translate(32, 105)">
+    <!-- 01 -->
+    <rect x="0" y="0" width="26" height="18" rx="4" fill="#0E223D"/>
+    <text x="13" y="13" font-family="ui-monospace, Consolas, monospace" font-size="11" font-weight="bold" fill="#43C6FF" text-anchor="middle">01</text>
+    <text x="36" y="14" font-family="-apple-system, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">Native 3D &amp; 2D Action Games</text>
+    <text x="36" y="32" font-family="-apple-system, sans-serif" font-size="12.5" fill="#7E9BB8">Custom player controllers, camera feel, smooth input, touch &amp; keyboard</text>
+
+    <!-- 02 -->
+    <rect x="0" y="52" width="26" height="18" rx="4" fill="#0E223D"/>
+    <text x="13" y="65" font-family="ui-monospace, Consolas, monospace" font-size="11" font-weight="bold" fill="#43C6FF" text-anchor="middle">02</text>
+    <text x="36" y="66" font-family="-apple-system, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">Enemy AI &amp; State Machines</text>
+    <text x="36" y="84" font-family="-apple-system, sans-serif" font-size="12.5" fill="#7E9BB8">NavMeshAgent navigation, patrol/chase/attack FSMs, raycast vision</text>
+
+    <!-- 03 -->
+    <rect x="0" y="104" width="26" height="18" rx="4" fill="#0E223D"/>
+    <text x="13" y="117" font-family="ui-monospace, Consolas, monospace" font-size="11" font-weight="bold" fill="#43C6FF" text-anchor="middle">03</text>
+    <text x="36" y="118" font-family="-apple-system, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">Combat Systems &amp; Physics</text>
+    <text x="36" y="136" font-family="-apple-system, sans-serif" font-size="12.5" fill="#7E9BB8">Hitboxes, hurtboxes, combo chaining, raycasting, invincibility frames</text>
+
+    <!-- 04 -->
+    <rect x="0" y="156" width="26" height="18" rx="4" fill="#0E223D"/>
+    <text x="13" y="169" font-family="ui-monospace, Consolas, monospace" font-size="11" font-weight="bold" fill="#43C6FF" text-anchor="middle">04</text>
+    <text x="36" y="170" font-family="-apple-system, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">VR &amp; Spatial Interaction</text>
+    <text x="36" y="188" font-family="-apple-system, sans-serif" font-size="12.5" fill="#7E9BB8">Unity 6, Meta XR SDK, hand tracking, grab/throw physics &amp; haptics</text>
+  </g>
+
+  <!-- Right: Highlight Subcard -->
+  <g transform="translate(530, 70)">
+    <rect x="0" y="0" width="290" height="235" rx="12" fill="#0A1830" stroke="#1B3A60" stroke-width="1.2"/>
+    <text x="22" y="32" font-family="ui-monospace, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7C95B6" letter-spacing="1">DEVELOPMENT LEADERSHIP</text>
+    
+    <text x="22" y="65" font-family="ui-monospace, Consolas, monospace" font-size="11" font-weight="bold" fill="#FF4757" letter-spacing="1">EXPERIENCE</text>
+    
+    <text x="22" y="125" font-family="Impact, Arial Black, sans-serif" font-size="48" font-weight="900" fill="#FFFFFF" letter-spacing="1">TEAM LEAD</text>
+    
+    <!-- play icon circle -->
+    <circle cx="250" cy="110" r="16" fill="#1677FF"/>
+    <polygon points="246,102 258,110 246,118" fill="#FFFFFF"/>
+
+    <text x="22" y="160" font-family="-apple-system, sans-serif" font-size="13" fill="#A9C9EA">Led dev team on <tspan fill="#FFFFFF" font-weight="600">Legends of Tretayug</tspan></text>
+    <text x="22" y="180" font-family="-apple-system, sans-serif" font-size="13" fill="#A9C9EA">at Akiyam Solutions. Built 6 game prototypes</text>
+    <text x="22" y="200" font-family="-apple-system, sans-serif" font-size="13" fill="#A9C9EA">spanning Android, PC, and Meta XR.</text>
+
+    <text x="22" y="222" font-family="ui-monospace, Consolas, monospace" font-size="9.5" fill="#5A7799" letter-spacing="1">UNITY ENGINE • UPDATED NOV 2026</text>
+  </g>
+</svg>

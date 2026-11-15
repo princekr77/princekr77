@@ -3,3 +3,5 @@
 preview.html
 render_preview.py
 build_svgs.py
+generate_spec_svgs.py
+clean_portrait.png
