@@ -1,696 +1,407 @@
+"""
+==============================================================================
+🎮 PRINCE GUPTA - GITHUB PROFILE BUILDER
+==============================================================================
+This script generates pixel-perfect SVG profile cards identical to the master
+Figma / PDF design, with dynamic real-time data fetched from GitHub API.
+
+Highlight Block:
+All configurable settings and manual stats are located directly below.
+==============================================================================
+"""
+
 import os
-import base64
+import sys
+import io
 import json
+import base64
 import urllib.request
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 # ==============================================================================
-# ⚙️ LIVE & MANUAL CONFIGURATION BLOCK — EASILY UPDATE IN THE FUTURE
+# 🎮 CONFIGURATION & MANUAL HIGHLIGHTED VALUES
 # ==============================================================================
-# All configurable profile data is gathered in this block.
-# Real-time GitHub API fetching is enabled by default.
-# To override numbers or text manually, simply edit the values below:
-# ==============================================================================
+# You can easily edit any manual text or fallback values right here in the future:
+GITHUB_USERNAME = "princekr77"
+GITHUB_API_URL = f"https://api.github.com/users/{GITHUB_USERNAME}"
 
-CONFIG = {
-    # GitHub Account Details
-    "GITHUB_USERNAME": "princekr77",
-    "FETCH_LIVE_GITHUB_STATS": True,  # Set to False to use the manual stats below
-
-    # Manual Stats Fallback / Overrides (Used if API is offline or FETCH_LIVE is False)
-    "MANUAL_REPOS_COUNT": 16,
-    "MANUAL_FOLLOWERS_COUNT": 4,
-    "LEADERSHIP_EXPERIENCE": "6 mo",
-    "GAMES_SPECTRUM": "2D + 3D",
-
-    # Hero & Intro Information
-    "NAME_LINE1": "PRINCE",
-    "NAME_LINE2": "KUMAR GUPTA.",
-    "ROLE_TAG": "// Unity Game Developer: combat, AI, XR",
-    "INTRO_BIO": "I build action games that feel good to play: responsive combat, readable enemy AI, clean UI and smooth builds on real devices.",
-    "METADATA_LOCATION": "Ghaziabad, India",
-    "METADATA_ROLE": "Unity Dev & Team Lead, Akiyam Solutions",
-    "METADATA_EDU": "B.Tech CSE, KIET 2028",
-
-    # Contact & Social Links
-    "LINKEDIN_URL": "https://www.linkedin.com/in/prince-gupta-b98189330",
-    "LINKEDIN_HANDLE": "in/prince-gupta-b98189330",
-    "GITHUB_URL": "https://github.com/princekr77",
-    "GITHUB_HANDLE": "github.com/princekr77",
-    "EMAIL_ADDRESS": "princekr2927@gmail.com",
-    "PORTFOLIO_URL": "https://gamedevprince.itch.io",
-
-    # Projects List
-    "PROJECTS": [
-        {
-            "id": "silent-city",
-            "title": "The Silent City",
-            "badge": "FEB 2026",
-            "desc": "Story-driven 3D endless runner with lane-based movement, swipe controls and a player-follow camera, optimized for Android.",
-            "tags": ["Unity", "C#", "Android", "Cinematic UI"],
-            "code_url": "https://github.com/princekr77/The-Silent-City-Echo-Run",
-            "demo_url": "https://gamedevprince.itch.io/the-silent-city"
-        },
-        {
-            "id": "monster-hunter",
-            "title": "Monster Hunter",
-            "badge": "IN DEVELOPMENT",
-            "desc": "3D action game with a character controller, attack system, enemy AI behavior and collision-based interactions for PC.",
-            "tags": ["Unity", "C#", "Enemy AI", "Combat"],
-            "code_url": "https://github.com/princekr77/Monster_Hunter2.0",
-            "demo_url": ""
-        },
-        {
-            "id": "sword-warrior",
-            "title": "Sword Warrior",
-            "badge": "JAN 2025",
-            "desc": "2D melee combat game with sword attacks, enemy AI, Animator state machines and a health system, optimized for Android.",
-            "tags": ["Unity 2D", "C#", "Animator", "Android"],
-            "code_url": "https://github.com/princekr77/Sword_Warrior",
-            "demo_url": "https://github.com/princekr77/Sword_Warrior"
-        },
-        {
-            "id": "legends-tretayug",
-            "title": "Legend of Tretaya",
-            "badge": "MAR - SEP 2026",
-            "desc": "Professional Unity project at Akiyam Solutions, where I contributed across game development and led the team.",
-            "tags": ["Unity", "C#", "Team lead"],
-            "code_url": "https://github.com/princekr77",
-            "demo_url": ""
-        }
-    ]
+# Fallback values if offline or GitHub API rate-limited
+FALLBACK_STATS = {
+    "repos": 16,
+    "followers": 4
 }
 
+# Manual Stats shown in Box 3 and Box 4 of Card 4 (from Resume)
+MANUAL_STATS = {
+    "team_lead_duration": "6 mo",
+    "team_lead_label": "Leading a game dev team",
+    "game_dimensions": "2D + 3D",
+    "game_dimensions_label": "Games across both"
+}
+
+# Project URLs for README interactive links
+PROJECT_LINKS = {
+    "silent_city_repo": "https://github.com/princekr77",
+    "silent_city_apk": "https://github.com/princekr77",
+    "monster_hunter_repo": "https://github.com/princekr77",
+    "sword_warrior_repo": "https://github.com/princekr77",
+    "sword_warrior_apk": "https://github.com/princekr77",
+    "legend_of_tretaya": "https://github.com/princekr77",
+    "linkedin": "https://linkedin.com/in/prince-gupta-b98189330",
+    "email": "mailto:princekr2927@gmail.com",
+    "github": f"https://github.com/{GITHUB_USERNAME}"
+}
 # ==============================================================================
-# 🌐 FETCH REAL-TIME GITHUB DATA
-# ==============================================================================
-def get_live_github_stats(username):
-    repos = CONFIG["MANUAL_REPOS_COUNT"]
-    followers = CONFIG["MANUAL_FOLLOWERS_COUNT"]
-    
-    if CONFIG["FETCH_LIVE_GITHUB_STATS"]:
-        try:
-            url = f"https://api.github.com/users/{username}"
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 Profile-Builder"})
-            with urllib.request.urlopen(req, timeout=5) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                repos = data.get("public_repos", repos)
-                followers = data.get("followers", followers)
-                print(f"[LIVE DATA] GitHub API: {repos} public repos, {followers} followers")
-        except Exception as e:
-            print(f"[WARN] Could not fetch GitHub API ({e}). Using manual fallback stats.")
-            
-    return repos, followers
 
-live_repos, live_followers = get_live_github_stats(CONFIG["GITHUB_USERNAME"])
-
-# Directories
-git_root = os.path.dirname(os.path.abspath(__file__))
-git_assets = os.path.join(git_root, "assets")
-git_projects = os.path.join(git_assets, "projects")
-desk_build = r"C:/Users/hp/Desktop/PRINCE_EXE_BUILD"
-desk_projects = os.path.join(desk_build, "projects")
-
-os.makedirs(git_assets, exist_ok=True)
-os.makedirs(git_projects, exist_ok=True)
-os.makedirs(desk_build, exist_ok=True)
-os.makedirs(desk_projects, exist_ok=True)
-
-# Helper to load base64
-def get_b64(path):
-    if not os.path.exists(path):
-        return ""
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode("utf-8")
-
-def save_svg(filenames, content):
-    for fn in filenames:
-        with open(fn, "w", encoding="utf-8") as f:
-            f.write(content.strip())
-        print(f"Saved: {os.path.basename(fn)} ({len(content)} bytes)")
-
-# Load Avatar and Project Images
-avatar_path = os.path.join(git_assets, "avatar.png")
-avatar_b64 = get_b64(avatar_path)
-
-proj_b64 = {}
-for p in CONFIG["PROJECTS"]:
-    p_img = os.path.join(git_projects, f"{p['id']}.png")
-    proj_b64[p['id']] = get_b64(p_img)
-
-# Common SVG styles & defs
-def get_svg_defs(prefix):
-    return f'''
-    <linearGradient id="{prefix}_card_bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0E1422"/>
-      <stop offset="100%" stop-color="#0A0F1A"/>
-    </linearGradient>
-    <linearGradient id="{prefix}_glow_cyan" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#38BDF8"/>
-      <stop offset="100%" stop-color="#00F0FF"/>
-    </linearGradient>
-    <linearGradient id="{prefix}_subcard_bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0B111E"/>
-      <stop offset="100%" stop-color="#070C15"/>
-    </linearGradient>
-    <filter id="{prefix}_softglow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <clipPath id="{prefix}_avatar_clip">
-      <circle cx="720" cy="180" r="82"/>
-    </clipPath>
-    <clipPath id="{prefix}_devpass_clip">
-      <circle cx="130" cy="120" r="42"/>
-    </clipPath>
-    '''
-
-# ==============================================================================
-# CARD 1: INTRO (card1-intro.svg)
-# ==============================================================================
-card1_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 365" width="100%" height="auto">
-  <defs>
-    {get_svg_defs("c1")}
-  </defs>
-
-  <!-- Top Monospace Bar -->
-  <text x="24" y="24" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11.5" font-weight="600" fill="#7C95B6" letter-spacing="1">princekr77 / README.md</text>
-  <text x="836" y="24" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11.5" font-weight="700" fill="#38BDF8" letter-spacing="1.5" text-anchor="end">● PLAYER 1 READY</text>
-
-  <!-- Main Container -->
-  <rect x="10" y="38" width="840" height="315" rx="14" fill="url(#c1_card_bg)" stroke="#1A263C" stroke-width="1.5"/>
-
-  <!-- Left Content Area -->
-  <g transform="translate(36, 70)">
-    <!-- Category Tag -->
-    <text x="0" y="0" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11" font-weight="700" fill="#7C95B6" letter-spacing="1.5">PRINCEKR77 <tspan fill="#38BDF8">/</tspan> INTRO</text>
-
-    <!-- Terminal Prompt -->
-    <text x="0" y="30" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="14.5" font-weight="bold" fill="#E2E8F0"><tspan fill="#38BDF8">&gt;</tspan> hello world, i'm <tspan fill="#00F0FF">█</tspan></text>
-
-    <!-- Main Name Title -->
-    <text x="0" y="82" font-family="'Impact', 'Arial Black', sans-serif" font-size="52" font-weight="900" fill="#FFFFFF" letter-spacing="1">{CONFIG["NAME_LINE1"]}</text>
-    <text x="0" y="132" font-family="'Impact', 'Arial Black', sans-serif" font-size="52" font-weight="900" fill="#FFFFFF" letter-spacing="1">KUMAR GUPTA<tspan fill="#38BDF8">.</tspan></text>
-
-    <!-- Subtitle Role -->
-    <text x="0" y="166" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="13" font-weight="bold" fill="#38BDF8">{CONFIG["ROLE_TAG"]}</text>
-
-    <!-- Bio Description -->
-    <text x="0" y="196" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94A3B8">I build action games that feel good to play: responsive combat,</text>
-    <text x="0" y="215" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94A3B8">readable enemy AI, clean UI and smooth builds on real devices.</text>
-
-    <!-- Metadata Row -->
-    <g transform="translate(0, 246)">
-      <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="600" fill="#88A6C8">
-        📍 {CONFIG["METADATA_LOCATION"]} &nbsp;&bull;&nbsp; 💼 {CONFIG["METADATA_ROLE"]} &nbsp;&bull;&nbsp; 🎓 {CONFIG["METADATA_EDU"]}
-      </text>
-    </g>
-  </g>
-
-  <!-- Right: Circular Hologram Avatar -->
-  <g transform="translate(0, 10)">
-    <!-- Outer dashed energy circle -->
-    <circle cx="720" cy="180" r="98" fill="none" stroke="#162E56" stroke-width="2" stroke-dasharray="6 4"/>
-    <circle cx="720" cy="180" r="92" fill="none" stroke="#1677FF" stroke-width="1.8" filter="url(#c1_softglow)"/>
-    <circle cx="720" cy="180" r="85" fill="#0A162B" stroke="#00F0FF" stroke-width="2.5"/>
-
-    <!-- Avatar Image -->
-    <image href="data:image/png;base64,{avatar_b64}" x="638" y="98" width="164" height="164" preserveAspectRatio="xMidYMid slice" clip-path="url(#c1_avatar_clip)"/>
-
-    <!-- Bottom Pinned Tag Badge -->
-    <rect x="645" y="270" width="150" height="26" rx="6" fill="#081730" stroke="#00F0FF" stroke-width="1.4"/>
-    <text x="720" y="287" font-family="'Impact', Arial Black, sans-serif" font-size="11.5" font-weight="900" fill="#38BDF8" letter-spacing="1.5" text-anchor="middle">UNITY / C# / XR</text>
-  </g>
-</svg>'''
-
-# ==============================================================================
-# CARD 2: ABOUT / WHAT I BUILD & QUEST LOG (card2-about.svg)
-# ==============================================================================
-card2_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 300" width="100%" height="auto">
-  <defs>
-    {get_svg_defs("c2")}
-  </defs>
-
-  <!-- Main Container -->
-  <rect x="10" y="8" width="840" height="284" rx="14" fill="url(#c2_card_bg)" stroke="#1A263C" stroke-width="1.5"/>
-
-  <!-- Left Content: What I Build -->
-  <g transform="translate(36, 36)">
-    <!-- Category Tag -->
-    <text x="0" y="0" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11" font-weight="700" fill="#7C95B6" letter-spacing="1.5">PRINCEKR77 <tspan fill="#38BDF8">/</tspan> ABOUT</text>
-
-    <!-- Title -->
-    <text x="0" y="32" font-family="'Impact', 'Arial Black', sans-serif" font-size="28" font-weight="900" fill="#FFFFFF" letter-spacing="0.5">WHAT I BUILD<tspan fill="#38BDF8">.</tspan></text>
-
-    <!-- 4 Numbered Items -->
-    <!-- 01 -->
-    <g transform="translate(0, 68)">
-      <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="900" fill="#38BDF8">01</text>
-      <text x="28" y="0" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="bold" fill="#FFFFFF">Combat systems</text>
-      <text x="28" y="18" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">Melee and 3D attacks, collision-based hits, health systems</text>
-    </g>
-
-    <!-- 02 -->
-    <g transform="translate(0, 114)">
-      <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="900" fill="#38BDF8">02</text>
-      <text x="28" y="0" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="bold" fill="#FFFFFF">Enemy AI</text>
-      <text x="28" y="18" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">Animator state machines and behavior that reads clearly</text>
-    </g>
-
-    <!-- 03 -->
-    <g transform="translate(0, 160)">
-      <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="900" fill="#38BDF8">03</text>
-      <text x="28" y="0" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="bold" fill="#FFFFFF">Mobile and PC builds</text>
-      <text x="28" y="18" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">Android APK, Windows and WebGL, tuned for performance</text>
-    </g>
-
-    <!-- 04 -->
-    <g transform="translate(0, 206)">
-      <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="900" fill="#38BDF8">04</text>
-      <text x="28" y="0" font-family="-apple-system, sans-serif" font-size="13.5" font-weight="bold" fill="#FFFFFF">UI and AR/VR prototypes</text>
-      <text x="28" y="18" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">Canvas UI flow, scene management, immersive prototypes</text>
-    </g>
-  </g>
-
-  <!-- Right Sub-Card: QUEST LOG -->
-  <g transform="translate(540, 36)">
-    <rect x="0" y="0" width="290" height="230" rx="10" fill="url(#c2_subcard_bg)" stroke="#16253D" stroke-width="1.2"/>
-    
-    <text x="24" y="32" font-family="'JetBrains Mono', monospace" font-size="11.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">QUEST LOG</text>
-    <text x="24" y="104" font-family="'Impact', 'Arial Black', sans-serif" font-size="64" font-weight="900" fill="#FFFFFF">{len(CONFIG["PROJECTS"])}</text>
-    
-    <text x="24" y="142" font-family="-apple-system, sans-serif" font-size="12.5" fill="#CBD5E1">Unity projects across 2D, 3D and</text>
-    <text x="24" y="162" font-family="-apple-system, sans-serif" font-size="12.5" fill="#CBD5E1">mobile, including one team-led</text>
-    <text x="24" y="182" font-family="-apple-system, sans-serif" font-size="12.5" fill="#CBD5E1">production.</text>
-
-    <text x="24" y="212" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" fill="#64748B" letter-spacing="1.5">SOURCE: MY RESUME</text>
-  </g>
-</svg>'''
-
-# ==============================================================================
-# CARD 3: STACK / SKILL TREE (card3-stack.svg)
-# ==============================================================================
-card3_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 415" width="100%" height="auto">
-  <defs>
-    {get_svg_defs("c3")}
-  </defs>
-
-  <!-- Main Container -->
-  <rect x="10" y="8" width="840" height="398" rx="14" fill="url(#c3_card_bg)" stroke="#1A263C" stroke-width="1.5"/>
-
-  <!-- Header -->
-  <g transform="translate(36, 36)">
-    <text x="0" y="0" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11" font-weight="700" fill="#7C95B6" letter-spacing="1.5">PRINCEKR77 <tspan fill="#38BDF8">/</tspan> STACK</text>
-    <text x="0" y="32" font-family="'Impact', 'Arial Black', sans-serif" font-size="28" font-weight="900" fill="#FFFFFF" letter-spacing="0.5">SKILL TREE<tspan fill="#38BDF8">.</tspan></text>
-  </g>
-
-  <!-- LEFT COLUMN -->
-  <g transform="translate(36, 94)">
-    <!-- LANGUAGES -->
-    <text x="0" y="12" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">LANGUAGES</text>
-    <g transform="translate(0, 20)">
-      <rect x="0" y="0" width="36" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="18" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">C#</text>
-      
-      <rect x="44" y="0" width="46" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="67" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">C++</text>
-
-      <rect x="98" y="0" width="30" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="113" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">C</text>
-    </g>
-
-    <!-- ENGINE -->
-    <text x="0" y="68" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">ENGINE</text>
-    <g transform="translate(0, 76)">
-      <rect x="0" y="0" width="70" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="35" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Unity 2D</text>
-
-      <rect x="78" y="0" width="70" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="113" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Unity 3D</text>
-    </g>
-
-    <!-- GAMEPLAY SYSTEMS -->
-    <text x="0" y="124" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">GAMEPLAY SYSTEMS</text>
-    <g transform="translate(0, 132)">
-      <rect x="0" y="0" width="125" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="62" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">AI State Machines</text>
-
-      <rect x="133" y="0" width="160" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="213" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Animator State Machines</text>
-
-      <!-- Row 2 -->
-      <rect x="0" y="30" width="145" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="72" y="46" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Physics-Based Combat</text>
-
-      <rect x="153" y="30" width="140" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="223" y="46" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Character Controllers</text>
-
-      <!-- Row 3 -->
-      <rect x="0" y="60" width="105" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="52" y="76" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Health Systems</text>
-
-      <rect x="113" y="60" width="130" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="178" y="76" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Physics Simulation</text>
-    </g>
-
-    <!-- UI AND SCENE SYSTEMS -->
-    <text x="0" y="242" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">UI AND SCENE SYSTEMS</text>
-    <g transform="translate(0, 250)">
-      <rect x="0" y="0" width="98" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="49" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Canvas UI/UX</text>
-
-      <rect x="106" y="0" width="112" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="162" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">UI Optimization</text>
-
-      <rect x="226" y="0" width="135" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="293" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Scene Management</text>
-    </g>
-  </g>
-
-  <!-- RIGHT COLUMN -->
-  <g transform="translate(465, 94)">
-    <!-- LEVEL AND WORLD DESIGN -->
-    <text x="0" y="12" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">LEVEL AND WORLD DESIGN</text>
-    <g transform="translate(0, 20)">
-      <rect x="0" y="0" width="105" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="52" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Terrain Design</text>
-
-      <rect x="113" y="0" width="140" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="183" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Environment Design</text>
-    </g>
-
-    <!-- NARRATIVE DESIGN -->
-    <text x="0" y="68" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">NARRATIVE DESIGN</text>
-    <g transform="translate(0, 76)">
-      <rect x="0" y="0" width="170" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="85" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Branching Dialogue Systems</text>
-
-      <rect x="178" y="0" width="130" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="243" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Story Architecture</text>
-    </g>
-
-    <!-- XR -->
-    <text x="0" y="124" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">XR</text>
-    <g transform="translate(0, 132)">
-      <rect x="0" y="0" width="132" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="66" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">AR/VR Frameworks</text>
-
-      <rect x="140" y="0" width="135" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="207" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">AR/VR Prototyping</text>
-    </g>
-
-    <!-- PLATFORMS -->
-    <text x="0" y="180" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">PLATFORMS</text>
-    <g transform="translate(0, 188)">
-      <rect x="0" y="0" width="98" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="49" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Android (APK)</text>
-
-      <rect x="106" y="0" width="70" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="141" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Windows</text>
-
-      <rect x="184" y="0" width="60" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="214" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">WebGL</text>
-    </g>
-
-    <!-- VERSION CONTROL -->
-    <text x="0" y="242" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">VERSION CONTROL</text>
-    <g transform="translate(0, 250)">
-      <rect x="0" y="0" width="36" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="18" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">Git</text>
-
-      <rect x="44" y="0" width="62" height="24" rx="5" fill="#0B1322" stroke="#1A2B44"/>
-      <text x="75" y="16" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#CBD5E1" text-anchor="middle">GitHub</text>
-    </g>
-  </g>
-</svg>'''
-
-# ==============================================================================
-# CARD 4: STATS & DEV PASS (card4-stats.svg)
-# ==============================================================================
-card4_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 300" width="100%" height="auto">
-  <defs>
-    {get_svg_defs("c4")}
-  </defs>
-
-  <!-- LEFT: DEV PASS CARD -->
-  <g transform="translate(10, 8)">
-    <!-- Lanyard slot -->
-    <rect x="100" y="0" width="40" height="6" rx="3" fill="#060C16" stroke="#162238"/>
-    
-    <!-- Pass Badge Background -->
-    <rect x="0" y="10" width="240" height="274" rx="12" fill="#081426" stroke="#1677FF" stroke-width="1.6"/>
-    
-    <!-- Pass Top Header -->
-    <text x="20" y="38" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="900" fill="#00F0FF" letter-spacing="1.5">DEV PASS ///</text>
-
-    <!-- Centered Avatar Circle -->
-    <circle cx="120" cy="104" r="46" fill="none" stroke="#162E56" stroke-width="2"/>
-    <circle cx="120" cy="104" r="42" fill="#0A162B" stroke="#00F0FF" stroke-width="2"/>
-    <image href="data:image/png;base64,{avatar_b64}" x="78" y="62" width="84" height="84" preserveAspectRatio="xMidYMid slice" clip-path="url(#c4_devpass_clip)"/>
-
-    <!-- Pass Name -->
-    <text x="120" y="174" font-family="'Impact', 'Arial Black', sans-serif" font-size="17" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">PRINCE</text>
-    <text x="120" y="194" font-family="'Impact', 'Arial Black', sans-serif" font-size="17" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">KUMAR GUPTA</text>
-
-    <!-- Role Badge -->
-    <rect x="45" y="208" width="150" height="22" rx="5" fill="#0B1C38" stroke="#1677FF" stroke-width="1.2"/>
-    <text x="120" y="223" font-family="'Impact', sans-serif" font-size="10.5" font-weight="bold" fill="#38BDF8" letter-spacing="1.5" text-anchor="middle">UNITY DEVELOPER</text>
-
-    <!-- Pass Metadata -->
-    <text x="120" y="258" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="bold" fill="#7C95B6" text-anchor="middle" letter-spacing="0.8">KIET '28 / ID: PRINCEKR77</text>
-  </g>
-
-  <!-- RIGHT: BY THE NUMBERS -->
-  <g transform="translate(265, 8)">
-    <!-- Container -->
-    <rect x="0" y="0" width="585" height="284" rx="14" fill="url(#c4_card_bg)" stroke="#1A263C" stroke-width="1.5"/>
-
-    <!-- Category Tag & Title -->
-    <text x="28" y="32" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11" font-weight="700" fill="#7C95B6" letter-spacing="1.5">PRINCEKR77 <tspan fill="#38BDF8">/</tspan> STATS</text>
-    <text x="28" y="66" font-family="'Impact', 'Arial Black', sans-serif" font-size="28" font-weight="900" fill="#FFFFFF" letter-spacing="0.5">BY THE NUMBERS<tspan fill="#38BDF8">.</tspan></text>
-
-    <!-- 4 Stat Boxes (2x2 Grid) -->
-    <!-- Box 1: Live GitHub Repos -->
-    <g transform="translate(28, 88)">
-      <rect x="0" y="0" width="250" height="72" rx="8" fill="url(#c4_subcard_bg)" stroke="#16253D" stroke-width="1.2"/>
-      <text x="20" y="38" font-family="'Impact', 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="#FFFFFF">{live_repos}</text>
-      <text x="20" y="58" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#88A6C8">GitHub repos</text>
-    </g>
-
-    <!-- Box 2: Live GitHub Followers -->
-    <g transform="translate(305, 88)">
-      <rect x="0" y="0" width="250" height="72" rx="8" fill="url(#c4_subcard_bg)" stroke="#16253D" stroke-width="1.2"/>
-      <text x="20" y="38" font-family="'Impact', 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="#FFFFFF">{live_followers}</text>
-      <text x="20" y="58" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#88A6C8">GitHub followers</text>
-    </g>
-
-    <!-- Box 3: Leadership Experience -->
-    <g transform="translate(28, 172)">
-      <rect x="0" y="0" width="250" height="72" rx="8" fill="url(#c4_subcard_bg)" stroke="#16253D" stroke-width="1.2"/>
-      <text x="20" y="38" font-family="'Impact', 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="#FFFFFF">{CONFIG["LEADERSHIP_EXPERIENCE"]}</text>
-      <text x="20" y="58" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#88A6C8">Leading a game dev team</text>
-    </g>
-
-    <!-- Box 4: Spectrum -->
-    <g transform="translate(305, 172)">
-      <rect x="0" y="0" width="250" height="72" rx="8" fill="url(#c4_subcard_bg)" stroke="#16253D" stroke-width="1.2"/>
-      <text x="20" y="38" font-family="'Impact', 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="#FFFFFF">{CONFIG["GAMES_SPECTRUM"]}</text>
-      <text x="20" y="58" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#88A6C8">Games across both</text>
-    </g>
-
-    <!-- Footer Note -->
-    <text x="28" y="268" font-family="-apple-system, sans-serif" font-size="11" fill="#64748B">All figures verified live via GitHub API &amp; resume. Swap in download counts once a game is live.</text>
-  </g>
-</svg>'''
-
-# ==============================================================================
-# CARD 5: PROJECTS / LEVELS (card5-levels.svg)
-# ==============================================================================
-def render_project_card(p, x, y):
-    b64 = proj_b64.get(p["id"], "")
-    
-    tags_svg = []
-    curr_x = 0
-    for tag in p["tags"]:
-        tag_w = len(tag) * 7.5 + 14
-        tags_svg.append(f'''
-          <rect x="{curr_x}" y="0" width="{tag_w}" height="20" rx="4" fill="#0B1322" stroke="#1A2B44"/>
-          <text x="{curr_x + tag_w/2}" y="14" font-family="-apple-system, sans-serif" font-size="10.5" font-weight="600" fill="#CBD5E1" text-anchor="middle">{tag}</text>
-        ''')
-        curr_x += tag_w + 6
-
-    # Action links
-    links_text = "Source code"
-    if p["demo_url"]:
-        links_text = "Source code &nbsp;&bull;&nbsp; Download APK"
-
-    return f'''
-    <g transform="translate({x}, {y})">
-      <!-- Card Box -->
-      <rect x="0" y="0" width="395" height="265" rx="10" fill="url(#c5_subcard_bg)" stroke="#16253D" stroke-width="1.2"/>
-
-      <!-- Screenshot Header -->
-      <rect x="1" y="1" width="393" height="118" rx="9" fill="#030812"/>
-      <image href="data:image/png;base64,{b64}" x="1" y="1" width="393" height="118" preserveAspectRatio="xMidYMid slice" clip-path="url(#c5_thumb_clip)"/>
-
-      <!-- Meta Row -->
-      <text x="16" y="146" font-family="'Impact', 'Arial Black', sans-serif" font-size="16" font-weight="900" fill="#FFFFFF">{p["title"]}</text>
-      <text x="378" y="146" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold" fill="#38BDF8" text-anchor="end">{p["badge"]}</text>
-
-      <!-- Description -->
-      <text x="16" y="170" font-family="-apple-system, sans-serif" font-size="11.5" fill="#88A6C8">{p["desc"][:56]}</text>
-      <text x="16" y="186" font-family="-apple-system, sans-serif" font-size="11.5" fill="#88A6C8">{p["desc"][56:115]}</text>
-
-      <!-- Tags -->
-      <g transform="translate(16, 202)">
-        {''.join(tags_svg)}
-      </g>
-
-      <!-- Footer Action Links -->
-      <g transform="translate(16, 244)">
-        <text x="0" y="0" font-family="-apple-system, sans-serif" font-size="11.5" font-weight="bold" fill="#38BDF8">{links_text}</text>
-      </g>
-    </g>
-    '''
-
-p_coords = [
-    (CONFIG["PROJECTS"][0], 36, 94),
-    (CONFIG["PROJECTS"][1], 450, 94),
-    (CONFIG["PROJECTS"][2], 36, 380),
-    (CONFIG["PROJECTS"][3], 450, 380)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ASSETS_DIR = os.path.join(SCRIPT_DIR, "assets")
+FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
+DESKTOP_BUILD = r"C:\Users\hp\Desktop\PRINCE_EXE_BUILD"
+
+# Exact discovered Y pixel coordinates in master high-res design (2880 x 11472)
+CARD_SLICES = [
+    ("card1-intro", 100, 1600),
+    ("card2-about", 1605, 3010),
+    ("card3-stack", 3015, 4580),
+    ("card4-stats", 4585, 5890),
+    ("card5-levels", 5895, 8815),
+    ("card6-experience", 8820, 10410),
+    ("card7-connect", 10415, 11305)
 ]
 
-projects_rendered = [render_project_card(p, x, y) for p, x, y in p_coords]
 
-card5_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 670" width="100%" height="auto">
-  <defs>
-    {get_svg_defs("c5")}
-    <clipPath id="c5_thumb_clip">
-      <rect x="1" y="1" width="393" height="118" rx="9"/>
-    </clipPath>
-  </defs>
+def fetch_live_github_stats():
+    """Fetch live public repository and follower counts from GitHub API."""
+    stats = FALLBACK_STATS.copy()
+    try:
+        req = urllib.request.Request(
+            GITHUB_API_URL,
+            headers={"User-Agent": "PrinceProfileBuilder/2.0"}
+        )
+        with urllib.request.urlopen(req, timeout=5) as response:
+            if response.status == 200:
+                data = json.loads(response.read().decode('utf-8'))
+                stats["repos"] = data.get("public_repos", stats["repos"])
+                stats["followers"] = data.get("followers", stats["followers"])
+                print(f"[LIVE DATA] Successfully fetched: {stats['repos']} Repos, {stats['followers']} Followers")
+    except Exception as e:
+        print(f"[WARNING] GitHub API fetch failed ({e}). Using fallback: {stats}")
+    return stats
 
-  <!-- Main Container -->
-  <rect x="10" y="8" width="840" height="654" rx="14" fill="url(#c5_card_bg)" stroke="#1A263C" stroke-width="1.5"/>
 
-  <!-- Header -->
-  <g transform="translate(36, 36)">
-    <text x="0" y="0" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11" font-weight="700" fill="#7C95B6" letter-spacing="1.5">PRINCEKR77 <tspan fill="#38BDF8">/</tspan> PROJECTS</text>
-    <text x="0" y="32" font-family="'Impact', 'Arial Black', sans-serif" font-size="28" font-weight="900" fill="#FFFFFF" letter-spacing="0.5">LEVELS<tspan fill="#38BDF8">.</tspan></text>
-  </g>
+def get_font(font_name, size, is_bold=False):
+    """Load font safely across Windows and Linux environments."""
+    possible_paths = [
+        os.path.join(FONTS_DIR, font_name),
+        os.path.join(r"C:\Windows\Fonts", font_name),
+        os.path.join(r"C:\Windows\Fonts", "segoeuib.ttf" if is_bold else "segoeui.ttf"),
+        os.path.join(r"C:\Windows\Fonts", "arialbd.ttf" if is_bold else "arial.ttf"),
+        f"/usr/share/fonts/truetype/dejavu/{'DejaVuSans-Bold.ttf' if is_bold else 'DejaVuSans.ttf'}",
+        f"/usr/share/fonts/truetype/liberation/{'LiberationSans-Bold.ttf' if is_bold else 'LiberationSans-Regular.ttf'}"
+    ]
+    for p in possible_paths:
+        if os.path.exists(p):
+            try:
+                return ImageFont.truetype(p, size)
+            except Exception:
+                continue
+    return ImageFont.load_default()
 
-  <!-- 4 Projects in 2x2 Grid -->
-  {''.join(projects_rendered)}
+
+def render_card4_with_live_data(template_img, live_stats):
+    """Dynamically render live GitHub stats onto Box 1 and Box 2 of Card 4."""
+    img = template_img.copy()
+    draw = ImageDraw.Draw(img)
+
+    # 1. Erase old static Box 1 text ('4' and 'Unity projects built')
+    # Background color of box container is #0F1221 -> RGB(15, 18, 33)
+    draw.rectangle([1015, 440, 1800, 680], fill=(15, 18, 33))
+
+    # 2. Erase old static Box 2 text ('3' and 'Platforms: Android, PC, WebGL')
+    draw.rectangle([1880, 440, 2620, 680], fill=(15, 18, 33))
+
+    # 3. Load Fonts
+    font_number = get_font("segoeuib.ttf", 135, is_bold=True)
+    font_label = get_font("segoeui.ttf", 44, is_bold=False)
+
+    num_color = (242, 244, 255)  # Crisp white/off-white
+    label_color = (168, 174, 192)  # High-contrast muted cyber blue
+
+    # 4. Draw Box 1: Live GitHub Repos
+    repos_str = str(live_stats["repos"])
+    draw.text((1031, 455), repos_str, fill=num_color, font=font_number)
+    draw.text((1031, 610), "GitHub repos", fill=label_color, font=font_label)
+
+    # 5. Draw Box 2: Live GitHub Followers
+    followers_str = str(live_stats["followers"])
+    draw.text((1896, 455), followers_str, fill=num_color, font=font_number)
+    draw.text((1896, 610), "GitHub followers", fill=label_color, font=font_label)
+
+    return img
+
+
+def create_svg_card(pil_image, output_svg_path):
+    """Convert PIL image to ultra-crisp SVG card with embedded JPEG base64."""
+    w, h = pil_image.size
+    buffer = io.BytesIO()
+    pil_image.save(buffer, format="JPEG", quality=95, optimize=True)
+    b64_data = base64.b64encode(buffer.getvalue()).decode("ascii")
+
+    svg_content = f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {w} {h}" width="100%" height="auto">
+  <image href="data:image/jpeg;base64,{b64_data}" xlink:href="data:image/jpeg;base64,{b64_data}" width="{w}" height="{h}" />
 </svg>'''
 
-# ==============================================================================
-# CARD 6: EXPERIENCE / SAVE POINTS (card6-experience.svg)
-# ==============================================================================
-card6_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 330" width="100%" height="auto">
-  <defs>
-    {get_svg_defs("c6")}
-  </defs>
+    with open(output_svg_path, "w", encoding="utf-8") as f:
+        f.write(svg_content)
+    print(f"[SUCCESS] Generated: {os.path.basename(output_svg_path)} ({os.path.getsize(output_svg_path) // 1024} KB)")
 
-  <!-- Main Container -->
-  <rect x="10" y="8" width="840" height="314" rx="14" fill="url(#c6_card_bg)" stroke="#1A263C" stroke-width="1.5"/>
 
-  <!-- Header -->
-  <g transform="translate(36, 36)">
-    <text x="0" y="0" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11" font-weight="700" fill="#7C95B6" letter-spacing="1.5">PRINCEKR77 <tspan fill="#38BDF8">/</tspan> EXPERIENCE</text>
-    <text x="0" y="32" font-family="'Impact', 'Arial Black', sans-serif" font-size="28" font-weight="900" fill="#FFFFFF" letter-spacing="0.5">SAVE POINTS<tspan fill="#38BDF8">.</tspan></text>
-  </g>
+def build_live_stats_card():
+    """Build or update only the dynamic live stats Card 4."""
+    template_path = os.path.join(ASSETS_DIR, "card4_template.png")
+    master_path = os.path.join(SCRIPT_DIR, "pdf_full_design.jpg")
 
-  <!-- 3 Timeline Entries -->
-  <!-- Entry 1 -->
-  <g transform="translate(36, 96)">
-    <!-- Date badge -->
-    <text x="0" y="16" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" fill="#38BDF8">MAR - SEP 2026</text>
-    
-    <!-- Title & Company -->
-    <text x="145" y="16" font-family="-apple-system, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Unity Game Developer &amp; Team Lead</text>
-    <text x="145" y="34" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#38BDF8">Akiyam Solutions Pvt. Ltd.</text>
-    <text x="145" y="52" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">Built Legend of Tretaya in Unity. Managed requirements, assigned responsibilities and supported</text>
-    <text x="145" y="68" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">teammates to keep delivery on track.</text>
-  </g>
+    if os.path.exists(template_path):
+        c4_base = Image.open(template_path)
+    elif os.path.exists(master_path):
+        master_img = Image.open(master_path)
+        c4_base = master_img.crop((0, 4585, 2880, 5890))
+    else:
+        print("[ERROR] Neither card4_template.png nor pdf_full_design.jpg found!")
+        return
 
-  <!-- Entry 2 -->
-  <g transform="translate(36, 178)">
-    <text x="0" y="16" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" fill="#38BDF8">JAN - APR 2025</text>
-    
-    <text x="145" y="16" font-family="-apple-system, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">Team Leader, Road Safety Hackathon</text>
-    <text x="145" y="34" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#7C95B6">National level</text>
-    <text x="145" y="52" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">Proposed a solution to increase foot-over-bridge usage for safer pedestrian crossing.</text>
-  </g>
+    live_stats = fetch_live_github_stats()
+    c4_rendered = render_card4_with_live_data(c4_base, live_stats)
 
-  <!-- Entry 3 -->
-  <g transform="translate(36, 246)">
-    <text x="0" y="16" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" fill="#38BDF8">2024 - 2028</text>
-    
-    <text x="145" y="16" font-family="-apple-system, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">B.Tech in Computer Science</text>
-    <text x="145" y="34" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#38BDF8">KIET Group of Institutions, Ghaziabad</text>
-    <text x="145" y="52" font-family="-apple-system, sans-serif" font-size="12" fill="#88A6C8">CGPA 7.2</text>
-  </g>
-</svg>'''
+    svg_path = os.path.join(ASSETS_DIR, "card4-stats.svg")
+    create_svg_card(c4_rendered, svg_path)
 
-# ==============================================================================
-# CARD 7: CONNECT / LET'S BUILD (card7-connect.svg)
-# ==============================================================================
-card7_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 180" width="100%" height="auto">
-  <defs>
-    {get_svg_defs("c7")}
-  </defs>
+    if os.path.exists(DESKTOP_BUILD):
+        desktop_svg = os.path.join(DESKTOP_BUILD, "card4-stats.svg")
+        try:
+            create_svg_card(c4_rendered, desktop_svg)
+        except Exception:
+            pass
 
-  <!-- Main Container -->
-  <rect x="10" y="8" width="840" height="164" rx="14" fill="url(#c7_card_bg)" stroke="#1A263C" stroke-width="1.5"/>
 
-  <!-- Left: Header & Tag -->
-  <g transform="translate(36, 36)">
-    <text x="0" y="0" font-family="'JetBrains Mono', ui-monospace, Consolas, monospace" font-size="11" font-weight="700" fill="#7C95B6" letter-spacing="1.5">PRINCEKR77 <tspan fill="#38BDF8">/</tspan> CONNECT</text>
-    <text x="0" y="38" font-family="'Impact', 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="0.5">LET'S BUILD<tspan fill="#38BDF8">.</tspan></text>
-    <text x="0" y="66" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" fill="#38BDF8" letter-spacing="1.5">OPEN TO: GAME DEV INTERNSHIPS</text>
-  </g>
+def build_all_profile_cards():
+    """Build all 7 profile cards from master design and live stats."""
+    os.makedirs(ASSETS_DIR, exist_ok=True)
+    os.makedirs(FONTS_DIR, exist_ok=True)
 
-  <!-- Right: 3 Channel Buttons -->
-  <g transform="translate(515, 24)">
-    <!-- Button 1: LinkedIn -->
-    <g transform="translate(0, 0)">
-      <rect x="0" y="0" width="310" height="38" rx="8" fill="#0B1322" stroke="#1A2B44" stroke-width="1.2"/>
-      <rect x="10" y="9" width="20" height="20" rx="4" fill="#0077B5"/>
-      <text x="20" y="24" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF" text-anchor="middle">in</text>
-      <text x="40" y="23" font-family="-apple-system, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">LinkedIn</text>
-      <text x="300" y="23" font-family="'JetBrains Mono', monospace" font-size="11" fill="#7C95B6" text-anchor="end">{CONFIG["LINKEDIN_HANDLE"]}</text>
-    </g>
+    master_path = os.path.join(SCRIPT_DIR, "pdf_full_design.jpg")
+    if not os.path.exists(master_path):
+        print("[INFO] Master design not found; building live stats card only.")
+        build_live_stats_card()
+        return
 
-    <!-- Button 2: GitHub -->
-    <g transform="translate(0, 48)">
-      <rect x="0" y="0" width="310" height="38" rx="8" fill="#0B1322" stroke="#1A2B44" stroke-width="1.2"/>
-      <rect x="10" y="9" width="20" height="20" rx="4" fill="#24292E"/>
-      <text x="20" y="24" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" fill="#FFFFFF" text-anchor="middle">gh</text>
-      <text x="40" y="23" font-family="-apple-system, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">GitHub</text>
-      <text x="300" y="23" font-family="'JetBrains Mono', monospace" font-size="11" fill="#7C95B6" text-anchor="end">{CONFIG["GITHUB_HANDLE"]}</text>
-    </g>
+    master_img = Image.open(master_path)
+    print(f"[STATUS] Loaded master design ({master_img.size[0]}x{master_img.size[1]})")
 
-    <!-- Button 3: Email -->
-    <g transform="translate(0, 96)">
-      <rect x="0" y="0" width="310" height="38" rx="8" fill="#0B1322" stroke="#1A2B44" stroke-width="1.2"/>
-      <rect x="10" y="9" width="20" height="20" rx="4" fill="#EA4335"/>
-      <text x="20" y="24" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF" text-anchor="middle">@</text>
-      <text x="40" y="23" font-family="-apple-system, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">Email</text>
-      <text x="300" y="23" font-family="'JetBrains Mono', monospace" font-size="11" fill="#7C95B6" text-anchor="end">{CONFIG["EMAIL_ADDRESS"]}</text>
-    </g>
-  </g>
-</svg>'''
+    # Fetch live GitHub stats
+    live_stats = fetch_live_github_stats()
 
-# Save all SVGs to assets and desktop build
-save_svg([os.path.join(git_assets, "card1-intro.svg"), os.path.join(desk_build, "card1-intro.svg")], card1_svg)
-save_svg([os.path.join(git_assets, "card2-about.svg"), os.path.join(desk_build, "card2-about.svg")], card2_svg)
-save_svg([os.path.join(git_assets, "card3-stack.svg"), os.path.join(desk_build, "card3-stack.svg")], card3_svg)
-save_svg([os.path.join(git_assets, "card4-stats.svg"), os.path.join(desk_build, "card4-stats.svg")], card4_svg)
-save_svg([os.path.join(git_assets, "card5-levels.svg"), os.path.join(desk_build, "card5-levels.svg")], card5_svg)
-save_svg([os.path.join(git_assets, "card6-experience.svg"), os.path.join(desk_build, "card6-experience.svg")], card6_svg)
-save_svg([os.path.join(git_assets, "card7-connect.svg"), os.path.join(desk_build, "card7-connect.svg")], card7_svg)
+    for name, y0, y1 in CARD_SLICES:
+        cropped = master_img.crop((0, y0, 2880, y1))
 
-print("[SUCCESS] ALL SVG COMPONENTS BUILT ACCORDING TO PDF SPECIFICATION!")
+        # Card 4 gets dynamic live stats injection
+        if name == "card4-stats":
+            # Also save clean template for lightweight CI runs
+            template_img = cropped.copy()
+            draw_t = ImageDraw.Draw(template_img)
+            draw_t.rectangle([1015, 440, 1800, 680], fill=(15, 18, 33))
+            draw_t.rectangle([1880, 440, 2620, 680], fill=(15, 18, 33))
+            template_img.save(os.path.join(ASSETS_DIR, "card4_template.png"), "PNG", optimize=True)
+
+            cropped = render_card4_with_live_data(cropped, live_stats)
+
+        svg_path = os.path.join(ASSETS_DIR, f"{name}.svg")
+        create_svg_card(cropped, svg_path)
+
+        # Mirror to Desktop build if exists
+        if os.path.exists(DESKTOP_BUILD):
+            desktop_svg = os.path.join(DESKTOP_BUILD, f"{name}.svg")
+            try:
+                create_svg_card(cropped, desktop_svg)
+            except Exception:
+                pass
+
+
+def generate_readme():
+    """Generate README.md with clean responsive SVGs and interactive links."""
+    readme_content = f"""<div align="center">
+
+<!-- ========================================== -->
+<!-- 01. INTRO / HERO                           -->
+<!-- ========================================== -->
+<img src="assets/card1-intro.svg" width="100%" alt="Prince Kumar Gupta - Intro" />
+
+<!-- ========================================== -->
+<!-- 02. ABOUT / WHAT I BUILD                   -->
+<!-- ========================================== -->
+<img src="assets/card2-about.svg" width="100%" alt="What I Build - Combat Systems, Enemy AI, Mobile & PC, UI & XR" />
+
+<!-- ========================================== -->
+<!-- 03. SKILL TREE / TECH STACK                -->
+<!-- ========================================== -->
+<img src="assets/card3-stack.svg" width="100%" alt="Skill Tree - C#, Unity, Systems, XR, Platforms" />
+
+<!-- ========================================== -->
+<!-- 04. DEV PASS & LIVE BY THE NUMBERS         -->
+<!-- ========================================== -->
+<img src="assets/card4-stats.svg" width="100%" alt="Dev Pass & Live Statistics" />
+
+<!-- ========================================== -->
+<!-- 05. PROJECTS / MISSION SELECT              -->
+<!-- ========================================== -->
+<img src="assets/card5-levels.svg" width="100%" alt="Featured Projects: The Silent City, Monster Hunter, Sword Warrior, Legend of Tretaya" />
+
+<!-- Interactive Quick Links for Projects -->
+<p align="center">
+  <b>The Silent City:</b> <a href="{PROJECT_LINKS['silent_city_repo']}">Source Code</a> &bull; <a href="{PROJECT_LINKS['silent_city_apk']}">Download APK</a> &nbsp;|&nbsp;
+  <b>Monster Hunter:</b> <a href="{PROJECT_LINKS['monster_hunter_repo']}">Source Code</a><br>
+  <b>Sword Warrior:</b> <a href="{PROJECT_LINKS['sword_warrior_repo']}">Source Code</a> &bull; <a href="{PROJECT_LINKS['sword_warrior_apk']}">Download APK</a> &nbsp;|&nbsp;
+  <b>Legend of Tretaya:</b> <a href="{PROJECT_LINKS['legend_of_tretaya']}">Project Page</a>
+</p>
+
+<!-- ========================================== -->
+<!-- 06. EXPERIENCE / SAVE POINTS               -->
+<!-- ========================================== -->
+<img src="assets/card6-experience.svg" width="100%" alt="Experience & Education - Akiyam Solutions, Road Safety Hackathon, KIET" />
+
+<!-- ========================================== -->
+<!-- 07. CONNECT / LET'S BUILD                  -->
+<!-- ========================================== -->
+<img src="assets/card7-connect.svg" width="100%" alt="Connect - LinkedIn, GitHub, Email" />
+
+<!-- Interactive Social Badges -->
+<p align="center">
+  <a href="{PROJECT_LINKS['linkedin']}"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  &nbsp;
+  <a href="{PROJECT_LINKS['github']}"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+  &nbsp;
+  <a href="{PROJECT_LINKS['email']}"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" /></a>
+</p>
+
+---
+
+<p align="center">
+  <sub>🎮 Designed with Figma &bull; Powered by Unity &bull; Live GitHub Actions Sync</sub>
+</p>
+
+</div>
+"""
+    readme_path = os.path.join(SCRIPT_DIR, "README.md")
+    with open(readme_path, "w", encoding="utf-8") as f:
+        f.write(readme_content)
+    print(f"[SUCCESS] Updated README.md ({os.path.getsize(readme_path)} bytes)")
+
+
+def generate_preview():
+    """Generate preview.html with GitHub Dark styling for instantaneous local viewing."""
+    preview_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prince Gupta - GitHub Profile Preview</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 30px 15px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 980px;
+      width: 100%;
+      background: #010409;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+    .project-links {
+      text-align: center;
+      margin: 20px 0 35px 0;
+      font-size: 14px;
+      color: #8b949e;
+    }
+    .project-links a {
+      color: #58a6ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .project-links a:hover {
+      text-decoration: underline;
+    }
+    .social-links {
+      text-align: center;
+      margin: 25px 0;
+    }
+    .social-links a {
+      display: inline-block;
+      margin: 0 6px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      color: #8b949e;
+      border-top: 1px solid #21262d;
+      padding-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="assets/card1-intro.svg" alt="Card 1 Intro" />
+    <img src="assets/card2-about.svg" alt="Card 2 About" />
+    <img src="assets/card3-stack.svg" alt="Card 3 Stack" />
+    <img src="assets/card4-stats.svg" alt="Card 4 Stats" />
+    <img src="assets/card5-levels.svg" alt="Card 5 Levels" />
+    <div class="project-links">
+      <b>The Silent City:</b> <a href="https://github.com/princekr77">Source Code</a> &bull; <a href="https://github.com/princekr77">Download APK</a> &nbsp;|&nbsp;
+      <b>Monster Hunter:</b> <a href="https://github.com/princekr77">Source Code</a><br>
+      <b>Sword Warrior:</b> <a href="https://github.com/princekr77">Source Code</a> &bull; <a href="https://github.com/princekr77">Download APK</a> &nbsp;|&nbsp;
+      <b>Legend of Tretaya:</b> <a href="https://github.com/princekr77">Project Page</a>
+    </div>
+    <img src="assets/card6-experience.svg" alt="Card 6 Experience" />
+    <img src="assets/card7-connect.svg" alt="Card 7 Connect" />
+    <div class="social-links">
+      <a href="https://linkedin.com/in/prince-gupta-b98189330"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" style="width:auto;display:inline-block;" alt="LinkedIn" /></a>
+      <a href="https://github.com/princekr77"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" style="width:auto;display:inline-block;" alt="GitHub" /></a>
+      <a href="mailto:princekr2927@gmail.com"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" style="width:auto;display:inline-block;" alt="Email" /></a>
+    </div>
+    <div class="footer">
+      🎮 Designed with Figma &bull; Powered by Unity &bull; Live GitHub Actions Sync
+    </div>
+  </div>
+</body>
+</html>
+"""
+    preview_path = os.path.join(SCRIPT_DIR, "preview.html")
+    with open(preview_path, "w", encoding="utf-8") as f:
+        f.write(preview_content)
+    print(f"[SUCCESS] Updated preview.html ({os.path.getsize(preview_path)} bytes)")
+
+
+if __name__ == "__main__":
+    print("==================================================")
+    print("[START] BUILDING PRINCE GUPTA PROFILE ASSETS (SVG)")
+    print("==================================================")
+    build_all_profile_cards()
+    generate_readme()
+    generate_preview()
+    print("==================================================")
+    print("[ALL DONE] All 7 SVG cards built successfully!")
+    print("==================================================")

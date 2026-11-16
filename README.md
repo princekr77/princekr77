@@ -1,78 +1,61 @@
 <div align="center">
 
-  <!-- ========================================================================= -->
-  <!-- 01: INTRO / HERO (PRINCEKR77 / INTRO)                                     -->
-  <!-- ========================================================================= -->
-  <img src="./assets/card1-intro.svg" alt="Prince Kumar Gupta — Unity Game Developer: combat, AI, XR" width="100%" />
+<!-- ========================================== -->
+<!-- 01. INTRO / HERO                           -->
+<!-- ========================================== -->
+<img src="assets/card1-intro.svg" width="100%" alt="Prince Kumar Gupta - Intro" />
 
-  <br/><br/>
+<!-- ========================================== -->
+<!-- 02. ABOUT / WHAT I BUILD                   -->
+<!-- ========================================== -->
+<img src="assets/card2-about.svg" width="100%" alt="What I Build - Combat Systems, Enemy AI, Mobile & PC, UI & XR" />
 
-  <!-- ========================================================================= -->
-  <!-- 02: ABOUT / WHAT I BUILD & QUEST LOG (PRINCEKR77 / ABOUT)                 -->
-  <!-- ========================================================================= -->
-  <img src="./assets/card2-about.svg" alt="What I Build — Combat systems, Enemy AI, Mobile/PC builds, UI & AR/VR prototypes" width="100%" />
+<!-- ========================================== -->
+<!-- 03. SKILL TREE / TECH STACK                -->
+<!-- ========================================== -->
+<img src="assets/card3-stack.svg" width="100%" alt="Skill Tree - C#, Unity, Systems, XR, Platforms" />
 
-  <br/><br/>
+<!-- ========================================== -->
+<!-- 04. DEV PASS & LIVE BY THE NUMBERS         -->
+<!-- ========================================== -->
+<img src="assets/card4-stats.svg" width="100%" alt="Dev Pass & Live Statistics" />
 
-  <!-- ========================================================================= -->
-  <!-- 03: STACK / SKILL TREE (PRINCEKR77 / STACK)                               -->
-  <!-- ========================================================================= -->
-  <img src="./assets/card3-stack.svg" alt="Skill Tree — Languages, Engine, Gameplay Systems, UI, Narrative, XR, Platforms" width="100%" />
+<!-- ========================================== -->
+<!-- 05. PROJECTS / MISSION SELECT              -->
+<!-- ========================================== -->
+<img src="assets/card5-levels.svg" width="100%" alt="Featured Projects: The Silent City, Monster Hunter, Sword Warrior, Legend of Tretaya" />
 
-  <br/><br/>
-
-  <!-- ========================================================================= -->
-  <!-- 04: STATS / DEV PASS & BY THE NUMBERS (PRINCEKR77 / STATS)                -->
-  <!-- ========================================================================= -->
-  <img src="./assets/card4-stats.svg" alt="By The Numbers — Live GitHub Repos, Followers, Leadership, 2D + 3D Games" width="100%" />
-
-  <br/><br/>
-
-  <!-- ========================================================================= -->
-  <!-- 05: PROJECTS / LEVELS (PRINCEKR77 / PROJECTS)                             -->
-  <!-- ========================================================================= -->
-  <img src="./assets/card5-levels.svg" alt="Levels / Projects — The Silent City, Monster Hunter, Sword Warrior, Legend of Tretaya" width="100%" />
-
-</div>
-
-<!-- DIRECT ACTION LINKS FOR PROJECTS -->
+<!-- Interactive Quick Links for Projects -->
 <p align="center">
-  🎮 <b><a href="https://github.com/princekr77/The-Silent-City-Echo-Run">The Silent City</a></b>: <a href="https://github.com/princekr77/The-Silent-City-Echo-Run">Source Code</a> &bull; <a href="https://gamedevprince.itch.io/the-silent-city">Playable Demo (Itch.io)</a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-  ⚔️ <b><a href="https://github.com/princekr77/Monster_Hunter2.0">Monster Hunter</a></b>: <a href="https://github.com/princekr77/Monster_Hunter2.0">Source Code</a>
-  <br/>
-  🗡️ <b><a href="https://github.com/princekr77/Sword_Warrior">Sword Warrior</a></b>: <a href="https://github.com/princekr77/Sword_Warrior">Source Code</a> &bull; <a href="https://github.com/princekr77/Sword_Warrior">Download APK</a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-  🏹 <b><a href="https://github.com/princekr77">Legend of Tretaya</a></b>: <a href="https://github.com/princekr77">Project Page</a>
+  <b>The Silent City:</b> <a href="https://github.com/princekr77">Source Code</a> &bull; <a href="https://github.com/princekr77">Download APK</a> &nbsp;|&nbsp;
+  <b>Monster Hunter:</b> <a href="https://github.com/princekr77">Source Code</a><br>
+  <b>Sword Warrior:</b> <a href="https://github.com/princekr77">Source Code</a> &bull; <a href="https://github.com/princekr77">Download APK</a> &nbsp;|&nbsp;
+  <b>Legend of Tretaya:</b> <a href="https://github.com/princekr77">Project Page</a>
 </p>
 
-<br/>
+<!-- ========================================== -->
+<!-- 06. EXPERIENCE / SAVE POINTS               -->
+<!-- ========================================== -->
+<img src="assets/card6-experience.svg" width="100%" alt="Experience & Education - Akiyam Solutions, Road Safety Hackathon, KIET" />
 
-<div align="center">
+<!-- ========================================== -->
+<!-- 07. CONNECT / LET'S BUILD                  -->
+<!-- ========================================== -->
+<img src="assets/card7-connect.svg" width="100%" alt="Connect - LinkedIn, GitHub, Email" />
 
-  <!-- ========================================================================= -->
-  <!-- 06: EXPERIENCE / SAVE POINTS (PRINCEKR77 / EXPERIENCE)                    -->
-  <!-- ========================================================================= -->
-  <img src="./assets/card6-experience.svg" alt="Save Points / Experience — Akiyam Solutions, Road Safety Hackathon, KIET B.Tech CSE" width="100%" />
+<!-- Interactive Social Badges -->
+<p align="center">
+  <a href="https://linkedin.com/in/prince-gupta-b98189330"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  &nbsp;
+  <a href="https://github.com/princekr77"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+  &nbsp;
+  <a href="mailto:princekr2927@gmail.com"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" /></a>
+</p>
 
-  <br/><br/>
+---
 
-  <!-- ========================================================================= -->
-  <!-- 07: CONNECT / LET'S BUILD (PRINCEKR77 / CONNECT)                          -->
-  <!-- ========================================================================= -->
-  <img src="./assets/card7-connect.svg" alt="Let's Build — Open to Game Dev Internships" width="100%" />
-
-  <br/><br/>
-
-  <!-- DIRECT CLICKABLE CONTACT LINKS -->
-  <p align="center">
-    <a href="https://www.linkedin.com/in/prince-gupta-b98189330"><b>LinkedIn</b></a>
-    &nbsp;&nbsp;·&nbsp;&nbsp;
-    <a href="https://gamedevprince.itch.io"><b>Portfolio</b></a>
-    &nbsp;&nbsp;·&nbsp;&nbsp;
-    <a href="mailto:princekr2927@gmail.com"><b>Email</b></a>
-    &nbsp;&nbsp;·&nbsp;&nbsp;
-    <a href="https://github.com/princekr77"><b>GitHub</b></a>
-  </p>
+<p align="center">
+  <sub>🎮 Designed with Figma &bull; Powered by Unity &bull; Live GitHub Actions Sync</sub>
+</p>
 
 </div>
